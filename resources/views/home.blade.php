@@ -25,7 +25,7 @@
                 </a>
             </div>
         </div>
-        @if ($settings->has('release'))
+        @if ($settings->has('release') && !empty($release))
         <div class="col-md-4 col-md-offset-4">
             <div class="info-box">
                 <span class="info-box-icon bg-yellow"><i class="fa fa-lightbulb-o"></i></span>

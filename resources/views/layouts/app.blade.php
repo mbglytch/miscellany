@@ -36,7 +36,7 @@
     <link href="{{ asset('css/vendor.css') }}" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}?v={{ setting('kanka.version') }}" rel="stylesheet">
 </head>
-<body class="skin-black sidebar-mini @if (Session::has('campaign_id')) @else layout-top-nav @endif">
+<body class="skin-black sidebar-mini @if (Session::has('campaign_id') && Auth::user()->campaigns()->count() > 0) @else layout-top-nav @endif">
 <div id="app" class="wrapper">
     <!-- Header -->
     @include('layouts.header')

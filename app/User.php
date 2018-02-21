@@ -3,9 +3,12 @@
 namespace App;
 
 use App\Campaign;
+use App\CampaignUser;
+
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use DateTime;
+use Exception;
 
 class User extends \TCG\Voyager\Models\User
 {
@@ -36,7 +39,23 @@ class User extends \TCG\Voyager\Models\User
      */
     public function campaign()
     {
-        return $this->belongsTo(Campaign::class, 'last_campaign_id', 'id');
+        $campaign = $this->campaigns()->whereCampaignId($this->last_campaign_id)->first();
+        if (empty($campaign)) {
+            $campaign = $this->campaigns->first();
+            $this->last_campaign_id = $campaign->id;
+            $this->update(['last_campaign_id']);
+        }
+        return $campaign;
+        // return $this->belongsTo(Campaign::class, 'last_campaign_id', 'id');
+    }
+
+    /**
+     * Get the user's campaigns
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function campaigns()
+    {
+        return $this->hasManyThrough(Campaign::class, CampaignUser::class, 'user_id', 'id', 'id', 'campaign_id');
     }
 
     /**
@@ -107,6 +126,28 @@ class User extends \TCG\Voyager\Models\User
             return '/storage/' . $this->avatar;
         } else {
             return '/images/defaults/user.svg';
+        }
+    }
+
+    /**
+     * Get campaign if it's a campaign you have access to, otherwise return false
+     * If $guaranteeReturn == true, return the most recently created campaign for this user
+     *
+     * @author Dick van Viegen
+     * @param  int  $campaign_id
+     * @param bool  $guaranteeReturn
+     * @return Campaign || boolean
+     */
+    public function getCampaign($campaign_id, $guaranteeReturn = false)
+    {
+        try {
+            if (!$guaranteeReturn) {
+                return $this->campaigns()->whereCampaignId($campaign_id)->firstOrFail();
+            } else {
+                return $this->campaigns()->latest()->firstOrFail();
+            }
+        } catch (Exception $e) {
+            return null;
         }
     }
 

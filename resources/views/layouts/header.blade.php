@@ -8,7 +8,7 @@
 
     <!-- Header Navbar -->
     <nav class="navbar navbar-static-top">
-        @if (Session::has('campaign_id'))
+        @if (Session::has('campaign_id') && Auth::user()->campaigns()->count() > 0)
         <!-- Sidebar toggle button-->
         <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
             <span class="sr-only">{{ trans('header.toggle_navigation') }}</span>

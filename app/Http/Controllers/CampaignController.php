@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Session;
 class CampaignController extends Controller
 {
     protected $view = 'campaigns';
-    
+
     /**
      * Create a new controller instance.
      *
@@ -31,10 +31,12 @@ class CampaignController extends Controller
     public function index(Request $request)
     {
         if ($request->has('campaign_id')) {
-            $campaign = Campaign::whereHas('users', function ($q) { $q->where('users.id', Auth::user()->id); })->where('id', $request->get('campaign_id'))->firstOrFail();
+            $campaign = Campaign::whereHas('users', function ($q) {
+                $q->where('users.id', Auth::user()->id);
+            })->where('id', $request->get('campaign_id'))->firstOrFail();
             CampaignService::switchCampaign($campaign);
             return redirect()->to('/');
-        } elseif (!Session::has('campaign_id')) {
+        } elseif (!Session::has('campaign_id') || Auth::user()->campaigns()->count() == 0) {
             return redirect()->route('campaigns.create');
         }
 

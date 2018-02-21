@@ -10,7 +10,7 @@
 @section('content')
     <div class="panel panel-default">
         <div class="panel-body">
-            @if (!session()->has('campaign_id'))
+            @if (Auth::user()->campaigns()->count() == 0)
                 <div class="callout callout-info">
                     <h4>{{ trans('campaigns.create.helper.title', ['name' => config('app.name')]) }}</h4>
 

@@ -54,13 +54,13 @@ class HomeController extends Controller
      */
     protected function back()
     {
-        $campaign = Session::get('campaign_id');
-        if (empty($campaign) || !isset($campaign) || Auth::user()->campaign()->count() == 0) {
+        $campaign_id = Session::get('campaign_id');
+        if (Auth::user()->campaigns()->count() == 0) {
             return redirect()->route('campaigns.index');
         }
 
         $settings = Auth::user()->dashboardSetting;
-        $campaign = Campaign::findOrFail(Session::get('campaign_id'));
+        $campaign = Auth::user()->getCampaign(Session::get('campaign_id', true));
         $characters = Character::recent()->take($settings->recent_count)->get();
         $families = Family::recent()->take($settings->recent_count)->get();
         $locations = Location::recent()->take($settings->recent_count)->get();

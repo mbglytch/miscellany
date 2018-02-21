@@ -1,4 +1,4 @@
-@if (Session::has('campaign_id'))
+@if (Session::has('campaign_id') && Auth::user()->campaigns()->count() > 0)
 <!-- Left side column. contains the logo and sidebar -->
 <aside class="main-sidebar">
 
